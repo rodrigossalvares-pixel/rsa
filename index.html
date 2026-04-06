@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RSA Soluções Empresariais | Consultoria de Gestão</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --dark: #111111;
+    --dark2: #1a1a1a;
+    --dark3: #222222;
+    --silver-light: #e8e3d8;
+    --silver-mid: #b8b3a8;
+    --silver-dark: #787268;
+    --silver-dim: #484338;
+    --accent: #c8a96e;
+    --accent-dim: rgba(200,169,110,0.15);
+    --text-primary: #e8e3d8;
+    --text-secondary: #988d7e;
+    --text-dim: #585248;
+    --border: rgba(200,169,110,0.12);
+    --border-light: rgba(232,227,216,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ─── TEXTURA DE FUNDO ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 40px,
+        rgba(255,255,255,0.012) 40px,
+        rgba(255,255,255,0.012) 41px
+      );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 24px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-blocks {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+  }
+
+  .logo-block {
+    width: 10px;
+    background: linear-gradient(180deg, var(--silver-light) 0%, var(--silver-dark) 100%);
+    border-radius: 1px;
+  }
+  .logo-block:nth-child(1) { height: 16px; }
+  .logo-block:nth-child(2) { height: 22px; }
+  .logo-block:nth-child(3) { height: 28px; }
+
+  .logo-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    color: var(--silver-light);
+  }
+
+  .logo-text span {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--silver-dark);
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    margin-top: 2px;
+  }
+
+  nav a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    transition: color 0.3s;
+  }
+  nav a:hover { color: var(--silver-light); }
+
+  .nav-links { display: flex; gap: 40px; }
+
+  .nav-cta {
+    padding: 10px 24px;
+    border: 1px solid var(--border);
+    color: var(--accent) !important;
+    font-size: 13px !important;
+    letter-spacing: 0.1em !important;
+    transition: all 0.3s !important;
+  }
+  .nav-cta:hover {
+    background: var(--accent-dim) !important;
+    border-color: var(--accent) !important;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 60px 80px;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .hero-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(200,169,110,0.06);
+  }
+  .hero-circle:nth-child(1) { width: 600px; height: 600px; top: -100px; right: -100px; }
+  .hero-circle:nth-child(2) { width: 900px; height: 900px; top: -250px; right: -250px; }
+  .hero-circle:nth-child(3) { width: 1200px; height: 1200px; top: -400px; right: -400px; }
+
+  .hero-glow {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,169,110,0.06) 0%, transparent 70%);
+    top: 10%;
+    right: 10%;
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 780px;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-tag-line {
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero-tag-text {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 7vw, 88px);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-subtitle {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    max-width: 560px;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 36px;
+    background: var(--accent);
+    color: var(--black);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.1);
+    transform: translateX(-100%);
+    transition: transform 0.4s;
+  }
+  .btn-primary:hover::before { transform: translateX(0); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(200,169,110,0.25); }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    transition: color 0.3s;
+    padding: 16px 0;
+  }
+  .btn-ghost:hover { color: var(--silver-light); }
+
+  .btn-arrow {
+    font-size: 18px;
+    transition: transform 0.3s;
+  }
+  .btn-ghost:hover .btn-arrow { transform: translateX(4px); }
+
+  /* ─── PILARES ─── */
+  .pillars {
+    position: absolute;
+    right: 60px;
+    bottom: 60px;
+    display: flex;
+    gap: 2px;
+    align-items: flex-end;
+    opacity: 0;
+    animation: fadeIn 1s 1.2s forwards;
+  }
+
+  .pillar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .pillar-bar {
+    width: 3px;
+    background: linear-gradient(to top, var(--accent), transparent);
+    border-radius: 2px;
+  }
+
+  .pillar-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+
+  /* ─── SEÇÃO: SOBRE ─── */
+  section {
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-sobre {
+    padding: 120px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 100px;
+    align-items: center;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .sobre-label {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .sobre-label::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .sobre-titulo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 4vw, 52px);
+    font-weight: 300;
+    line-height: 1.15;
+    margin-bottom: 32px;
+  }
+
+  .sobre-titulo em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .sobre-texto {
+    font-size: 16px;
+    line-height: 1.9;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+  }
+
+  .sobre-assinatura {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .assinatura-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .assinatura-nome {
+    font-size: 15px;
+    color: var(--silver-light);
+    margin-bottom: 4px;
+  }
+
+  .assinatura-cargo {
+    font-size: 12px;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+  }
+
+  /* Grid métricas lado direito */
+  .sobre-metricas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .metrica-card {
+    background: var(--dark2);
+    padding: 40px 32px;
+    border: 1px solid var(--border-light);
+    transition: border-color 0.3s;
+  }
+  .metrica-card:hover { border-color: var(--border); }
+
+  .metrica-numero {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .metrica-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    letter-spacing: 0.03em;
+  }
+
+  /* ─── SEÇÃO: SERVIÇOS ─── */
+  .section-servicos {
+    padding: 120px 60px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 80px;
+  }
+
+  .section-titulo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(40px, 5vw, 60px);
+    font-weight: 300;
+    line-height: 1.1;
+  }
+
+  .section-titulo em { font-style: italic; color: var(--accent); }
+
+  .section-desc {
+    max-width: 360px;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    text-align: right;
+  }
+
+  .servicos-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+  }
+
+  .servico-card {
+    background: var(--dark2);
+    padding: 48px 36px;
+    border: 1px solid var(--border-light);
+    transition: all 0.4s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .servico-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.4s;
+    transform-origin: left;
+  }
+
+  .servico-card:hover { background: var(--dark3); border-color: var(--border); }
+  .servico-card:hover::before { transform: scaleX(1); }
+
+  .servico-numero {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    margin-bottom: 32px;
+  }
+
+  .servico-icon {
+    font-size: 28px;
+    margin-bottom: 24px;
+    display: block;
+    filter: grayscale(0.3);
+  }
+
+  .servico-titulo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 400;
+    margin-bottom: 16px;
+    color: var(--silver-light);
+  }
+
+  .servico-desc {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+  }
+
+  /* ─── SEÇÃO: COMO ATUO ─── */
+  .section-como {
+    padding: 120px 60px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .como-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 60px;
+    margin-top: 80px;
+  }
+
+  .como-step {
+    position: relative;
+    padding-left: 32px;
+    border-left: 1px solid var(--border);
+  }
+
+  .como-step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px;
+    font-weight: 300;
+    color: var(--text-dim);
+    line-height: 1;
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+  }
+
+  .como-step-titulo {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--silver-light);
+    margin-bottom: 16px;
+    letter-spacing: 0.02em;
+  }
+
+  .como-step-desc {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--text-secondary);
+  }
+
+  /* ─── SEÇÃO: CTA FINAL ─── */
+  .section-cta {
+    padding: 140px 60px;
+    border-top: 1px solid var(--border-light);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-bg-text {
+    position: absolute;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 200px;
+    font-weight: 300;
+    color: rgba(200,169,110,0.03);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none;
+    letter-spacing: -0.05em;
+  }
+
+  .cta-label {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+
+  .cta-titulo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(44px, 6vw, 76px);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 24px;
+  }
+
+  .cta-titulo em { font-style: italic; color: var(--accent); }
+
+  .cta-subtitulo {
+    font-size: 17px;
+    color: var(--text-secondary);
+    max-width: 500px;
+    margin: 0 auto 56px;
+    line-height: 1.8;
+  }
+
+  .cta-wpp {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 48px;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 15px;
+    letter-spacing: 0.1em;
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-wpp::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .cta-wpp:hover::before { transform: translateY(0); }
+  .cta-wpp:hover { color: var(--black); }
+
+  .cta-wpp span, .cta-wpp svg {
+    position: relative;
+    z-index: 1;
+  }
+
+  .wpp-icon {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+  }
+
+  .cta-info {
+    margin-top: 32px;
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    padding: 48px 60px;
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-copy {
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 32px;
+  }
+
+  .footer-links a {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--silver-light); }
+
+  /* ─── ANIMAÇÕES ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.8s, transform 0.8s;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── MOBILE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 24px 80px; }
+    .pillars { display: none; }
+    .section-sobre { padding: 80px 24px; grid-template-columns: 1fr; gap: 60px; }
+    .section-servicos { padding: 80px 24px; }
+    .section-header { flex-direction: column; align-items: flex-start; gap: 24px; }
+    .section-desc { text-align: left; max-width: 100%; }
+    .servicos-grid { grid-template-columns: 1fr 1fr; }
+    .section-como { padding: 80px 24px; }
+    .como-grid { grid-template-columns: 1fr; gap: 40px; }
+    .section-cta { padding: 80px 24px; }
+    footer { padding: 32px 24px; flex-direction: column; gap: 20px; text-align: center; }
+    .sobre-metricas { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 600px) {
+    .servicos-grid { grid-template-columns: 1fr; }
+    .hero-title { font-size: 44px; }
+    .hero-actions { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-blocks">
+      <div class="logo-block"></div>
+      <div class="logo-block"></div>
+      <div class="logo-block"></div>
+    </div>
+    <div class="logo-text">
+      RSA
+      <span>SOLUÇÕES EMPRESARIAIS</span>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="#sobre">Sobre</a>
+    <a href="#servicos">Serviços</a>
+    <a href="#metodo">Método</a>
+    <a href="#contato" class="nav-cta">Fale conosco</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-circle"></div>
+    <div class="hero-circle"></div>
+    <div class="hero-circle"></div>
+    <div class="hero-glow"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-tag">
+      <div class="hero-tag-line"></div>
+      <span class="hero-tag-text">Consultoria de Gestão · Belo Horizonte</span>
+    </div>
+
+    <h1 class="hero-title">
+      Gestão que<br>
+      <em>transforma</em><br>
+      operações.
+    </h1>
+
+    <p class="hero-subtitle">
+      Estruturamos processos, indicadores, estratégia e financeiro para empresas que cresceram rápido e precisam que a gestão acompanhe esse ritmo.
+    </p>
+
+    <div class="hero-actions">
+      <a href="https://wa.me/5531993532819?text=Olá,%20vim%20pelo%20site%20da%20RSA%20e%20gostaria%20de%20conversar%20sobre%20consultoria." class="btn-primary" target="_blank">
+        <svg class="wpp-icon" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        <span>Conversar no WhatsApp</span>
+      </a>
+      <a href="#servicos" class="btn-ghost">
+        Ver serviços <span class="btn-arrow">→</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="pillars">
+    <div class="pillar-item">
+      <div class="pillar-bar" style="height:40px"></div>
+      <span class="pillar-label">Processos</span>
+    </div>
+    <div class="pillar-item">
+      <div class="pillar-bar" style="height:60px"></div>
+      <span class="pillar-label">Estratégia</span>
+    </div>
+    <div class="pillar-item">
+      <div class="pillar-bar" style="height:80px"></div>
+      <span class="pillar-label">Indicadores</span>
+    </div>
+    <div class="pillar-item">
+      <div class="pillar-bar" style="height:100px"></div>
+      <span class="pillar-label">Financeiro</span>
+    </div>
+  </div>
+</section>
+
+<!-- SOBRE -->
+<section class="section-sobre" id="sobre">
+  <div class="reveal">
+    <div class="sobre-label">Sobre a RSA</div>
+    <h2 class="sobre-titulo">
+      Clareza onde<br>há ruído.<br>
+      <em>Estrutura</em> onde<br>há improviso.
+    </h2>
+    <p class="sobre-texto">
+      A RSA Soluções Empresariais é uma consultoria especializada na estruturação e transformação da gestão de médias e grandes empresas.
+    </p>
+    <p class="sobre-texto">
+      Atuamos nos quatro pilares que sustentam uma gestão sólida — processos, indicadores, estratégia e financeiro — sempre conectando diagnóstico rigoroso com execução prática.
+    </p>
+    <p class="sobre-texto">
+      Nossa abordagem não entrega relatórios. Entrega transformação real, com metodologia e acompanhamento próximo até o resultado aparecer.
+    </p>
+
+    <div class="sobre-assinatura">
+      <div class="assinatura-avatar">RA</div>
+      <div>
+        <div class="assinatura-nome">Rodrigo Álvares</div>
+        <div class="assinatura-cargo">Engenheiro de Produção · Consultor de Gestão · +8 anos</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sobre-metricas reveal">
+    <div class="metrica-card">
+      <div class="metrica-numero">8+</div>
+      <div class="metrica-label">Anos de experiência em gestão organizacional</div>
+    </div>
+    <div class="metrica-card">
+      <div class="metrica-numero">4</div>
+      <div class="metrica-label">Pilares integrados em cada projeto</div>
+    </div>
+    <div class="metrica-card">
+      <div class="metrica-numero">ISO</div>
+      <div class="metrica-label">9001 — projetos de certificação conduzidos</div>
+    </div>
+    <div class="metrica-card">
+      <div class="metrica-numero">BH</div>
+      <div class="metrica-label">Belo Horizonte com atuação em todo o Brasil</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVIÇOS -->
+<section class="section-servicos" id="servicos">
+  <div class="section-header reveal">
+    <h2 class="section-titulo">
+      O que<br><em>entregamos</em>
+    </h2>
+    <p class="section-desc">
+      Cada projeto é estruturado para gerar resultado real — não só diagnóstico. Atuamos do mapeamento à implantação.
+    </p>
+  </div>
+
+  <div class="servicos-grid">
+    <div class="servico-card reveal">
+      <div class="servico-numero">01</div>
+      <span class="servico-icon">⚙️</span>
+      <div class="servico-titulo">Gestão de Processos</div>
+      <div class="servico-desc">Mapeamento, redesenho e implantação de processos que eliminam gargalos, reduzem retrabalho e aumentam a eficiência operacional.</div>
+    </div>
+    <div class="servico-card reveal">
+      <div class="servico-numero">02</div>
+      <span class="servico-icon">📊</span>
+      <div class="servico-titulo">KPIs e Dashboards</div>
+      <div class="servico-desc">Criação de indicadores por departamento e painéis gerenciais que transformam dados em decisões. Sem achismo, sem gestão no escuro.</div>
+    </div>
+    <div class="servico-card reveal">
+      <div class="servico-numero">03</div>
+      <span class="servico-icon">🎯</span>
+      <div class="servico-titulo">Planejamento Estratégico</div>
+      <div class="servico-desc">Estruturação de OKRs, BSC e metas desdobradas por departamento. Estratégia que sai do papel e vira rotina de gestão.</div>
+    </div>
+    <div class="servico-card reveal">
+      <div class="servico-numero">04</div>
+      <span class="servico-icon">💰</span>
+      <div class="servico-titulo">Gestão Financeira</div>
+      <div class="servico-desc">DRE gerencial, orçamento com controle previsto × realizado, fluxo de caixa e análise de desvios. Visibilidade financeira de verdade.</div>
+    </div>
+  </div>
+</section>
+
+<!-- MÉTODO -->
+<section class="section-como" id="metodo">
+  <div class="section-header reveal">
+    <h2 class="section-titulo">
+      Como<br><em>atuamos</em>
+    </h2>
+  </div>
+
+  <div class="como-grid">
+    <div class="como-step reveal">
+      <div class="como-step-num">01</div>
+      <div class="como-step-titulo">Diagnóstico</div>
+      <div class="como-step-desc">Entendemos a fundo a operação, os números e os processos. Identificamos onde está o problema real — não apenas os sintomas visíveis.</div>
+    </div>
+    <div class="como-step reveal">
+      <div class="como-step-num">02</div>
+      <div class="como-step-titulo">Estruturação</div>
+      <div class="como-step-desc">Desenhamos a solução com a equipe interna. Processos, indicadores, estrutura financeira e plano estratégico alinhados ao negócio.</div>
+    </div>
+    <div class="como-step reveal">
+      <div class="como-step-num">03</div>
+      <div class="como-step-titulo">Implantação e acompanhamento</div>
+      <div class="como-step-desc">Estamos presentes na execução. Acompanhamos KPIs, ajustamos o que for necessário e garantimos que a mudança se sustente no tempo.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="section-cta" id="contato">
+  <div class="cta-bg-text">RSA</div>
+  <div class="cta-label">Vamos conversar</div>
+  <h2 class="cta-titulo">
+    Sua empresa merece<br>
+    gestão que <em>funciona.</em>
+  </h2>
+  <p class="cta-subtitulo">
+    Se você lidera uma empresa ou área que cresceu rápido e sente que a gestão não acompanhou o ritmo, vamos conversar.
+  </p>
+  <a href="https://wa.me/5531993532819?text=Olá,%20vim%20pelo%20site%20da%20RSA%20e%20gostaria%20de%20conversar%20sobre%20consultoria." class="cta-wpp" target="_blank">
+    <svg class="wpp-icon" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    <span>Falar com a RSA no WhatsApp</span>
+  </a>
+  <p class="cta-info">Respondemos em até 24 horas · Primeira conversa sem compromisso</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">© 2026 RSA Soluções Empresariais · Belo Horizonte, MG</div>
+  <div class="footer-links">
+    <a href="https://www.linkedin.com/company/rsa-soluções-empresariais" target="_blank">LinkedIn</a>
+    <a href="mailto:rodrigossalvares@gmail.com">E-mail</a>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Atualizar número do WhatsApp
+  // Troque 5531999999999 pelo seu número real: 55 + DDD + número
+</script>
+</body>
+</html>
